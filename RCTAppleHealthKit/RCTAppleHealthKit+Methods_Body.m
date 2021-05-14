@@ -19,7 +19,7 @@
 {
     HKQuantityType *weightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBodyMass];
 
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit poundUnit]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit poundUnit]];
     
     [self fetchMostRecentQuantitySampleOfType:weightType
                                     predicate:nil
@@ -32,8 +32,8 @@
             double usersWeight = [mostRecentQuantity doubleValueForUnit:unit];
             NSDictionary *response = @{
                     @"value" : @(usersWeight),
-                    @"startDate" : [RCTAppleHealthKit buildISO8601StringFromDate:startDate],
-                    @"endDate" : [RCTAppleHealthKit buildISO8601StringFromDate:endDate],
+                    @"startDate" : [self.rnAppleHealthKit buildISO8601StringFrom:startDate],
+                    @"endDate" : [self.rnAppleHealthKit buildISO8601StringFrom:endDate],
             };
 
             callback(@[[NSNull null], response]);
@@ -46,16 +46,16 @@
 {
     HKQuantityType *weightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBodyMass];
 
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit poundUnit]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit poundUnit]];
     NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
-    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
-    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
+    NSDate *endDate = [self.rnAppleHealthKit dateFrom:input key:@"endDate" defaultDate:[NSDate date]];
     if(startDate == nil){
         callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
         return;
     }
-    NSPredicate * predicate = [RCTAppleHealthKit predicateForSamplesBetweenDates:startDate endDate:endDate];
+    NSPredicate * predicate = [self.rnAppleHealthKit predicateForSamplesBetweenWithStartDate:startDate endDate:endDate];
 
     [self fetchQuantitySamplesOfType:weightType
                                 unit:unit
@@ -76,9 +76,9 @@
 
 - (void)body_saveWeight:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-    double weight = [RCTAppleHealthKit doubleValueFromOptions:input];
-    NSDate *sampleDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:[NSDate date]];
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit poundUnit]];
+    double weight = [[input objectForKey:@"value"] doubleValue];
+    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:[NSDate date]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit poundUnit]];
 
     HKQuantity *weightQuantity = [HKQuantity quantityWithUnit:unit doubleValue:weight];
     HKQuantityType *weightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBodyMass];
@@ -111,8 +111,8 @@
 
             NSDictionary *response = @{
                     @"value" : @(bmi),
-                    @"startDate" : [RCTAppleHealthKit buildISO8601StringFromDate:startDate],
-                    @"endDate" : [RCTAppleHealthKit buildISO8601StringFromDate:endDate],
+                    @"startDate" : [self.rnAppleHealthKit buildISO8601StringFrom:startDate],
+                    @"endDate" : [self.rnAppleHealthKit buildISO8601StringFrom:endDate],
             };
 
             callback(@[[NSNull null], response]);
@@ -123,8 +123,8 @@
 
 - (void)body_saveBodyMassIndex:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-    double bmi = [RCTAppleHealthKit doubleValueFromOptions:input];
-    NSDate *sampleDate = [RCTAppleHealthKit dateFromOptionsDefaultNow:input];
+    double bmi = [[input objectForKey:@"value"] doubleValue];
+    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"date" defaultDate:[NSDate date]];
     HKUnit *unit = [HKUnit countUnit];
 
     HKQuantity *bmiQuantity = [HKQuantity quantityWithUnit:unit doubleValue:bmi];
@@ -144,7 +144,7 @@
 - (void)body_getLatestHeight:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
     HKQuantityType *heightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierHeight];
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit inchUnit]];;
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit inchUnit]];
 
     [self fetchMostRecentQuantitySampleOfType:heightType
                                     predicate:nil
@@ -159,8 +159,8 @@
 
             NSDictionary *response = @{
                     @"value" : @(height),
-                    @"startDate" : [RCTAppleHealthKit buildISO8601StringFromDate:startDate],
-                    @"endDate" : [RCTAppleHealthKit buildISO8601StringFromDate:endDate],
+                    @"startDate" : [self.rnAppleHealthKit buildISO8601StringFrom:startDate],
+                    @"endDate" : [self.rnAppleHealthKit buildISO8601StringFrom:endDate],
             };
 
             callback(@[[NSNull null], response]);
@@ -173,16 +173,16 @@
 {
     HKQuantityType *heightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierHeight];
 
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit inchUnit]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit inchUnit]];
     NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
-    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
-    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
+    NSDate *endDate = [self.rnAppleHealthKit dateFrom:input key:@"endDate" defaultDate:[NSDate date]];
     if(startDate == nil){
         callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
         return;
     }
-    NSPredicate * predicate = [RCTAppleHealthKit predicateForSamplesBetweenDates:startDate endDate:endDate];
+    NSPredicate * predicate = [self.rnAppleHealthKit predicateForSamplesBetweenWithStartDate:startDate endDate:endDate];
 
     [self fetchQuantitySamplesOfType:heightType
                                 unit:unit
@@ -203,9 +203,9 @@
 
 - (void)body_saveHeight:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-    double height = [RCTAppleHealthKit doubleValueFromOptions:input];
-    NSDate *sampleDate = [RCTAppleHealthKit dateFromOptionsDefaultNow:input];
-    HKUnit *heightUnit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit inchUnit]];
+    double height = [[input objectForKey:@"value"] doubleValue];
+    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"date" defaultDate:[NSDate date]];
+    HKUnit *heightUnit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit inchUnit]];
 
     HKQuantity *heightQuantity = [HKQuantity quantityWithUnit:heightUnit doubleValue:height];
     HKQuantityType *heightType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierHeight];
@@ -240,8 +240,8 @@
 
             NSDictionary *response = @{
                     @"value" : @(percentage),
-                    @"startDate" : [RCTAppleHealthKit buildISO8601StringFromDate:startDate],
-                    @"endDate" : [RCTAppleHealthKit buildISO8601StringFromDate:endDate],
+                    @"startDate" : [self.rnAppleHealthKit buildISO8601StringFrom:startDate],
+                    @"endDate" : [self.rnAppleHealthKit buildISO8601StringFrom:endDate],
             };
 
             callback(@[[NSNull null], response]);
@@ -257,13 +257,13 @@
     HKUnit *unit = [HKUnit percentUnit];
     NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
-    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
-    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
+    NSDate *endDate = [self.rnAppleHealthKit dateFrom:input key:@"endDate" defaultDate:[NSDate date]];
     if(startDate == nil){
         callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
         return;
     }
-    NSPredicate * predicate = [RCTAppleHealthKit predicateForSamplesBetweenDates:startDate endDate:endDate];
+    NSPredicate * predicate = [self.rnAppleHealthKit predicateForSamplesBetweenWithStartDate:startDate endDate:endDate];
     
     [self fetchQuantitySamplesOfType:bodyFatPercentType
                                 unit:unit
@@ -285,8 +285,8 @@
 
 - (void)body_saveBodyFatPercentage:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-    double percentage = [RCTAppleHealthKit doubleValueFromOptions:input];
-    NSDate *sampleDate = [RCTAppleHealthKit dateFromOptionsDefaultNow:input];
+    double percentage = [[input objectForKey:@"value"] doubleValue];
+    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"date" defaultDate:[NSDate date]];
     HKUnit *unit = [HKUnit percentUnit];
     
     percentage = percentage / 100;
@@ -308,9 +308,9 @@
 
 - (void)body_saveBodyTemperature:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-    double temperature = [RCTAppleHealthKit doubleValueFromOptions:input];
-    NSDate *sampleDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:[NSDate date]];
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit degreeFahrenheitUnit]];
+    double temperature = [[input objectForKey:@"value"] doubleValue];
+    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:[NSDate date]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit degreeFahrenheitUnit]];
 
     HKQuantity *temperatureQuantity = [HKQuantity quantityWithUnit:unit doubleValue:temperature];
     HKQuantityType *bodyTemperatureType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBodyTemperature];
@@ -343,8 +343,8 @@
 
             NSDictionary *response = @{
                     @"value" : @(leanBodyMass),
-                    @"startDate" : [RCTAppleHealthKit buildISO8601StringFromDate:startDate],
-                    @"endDate" : [RCTAppleHealthKit buildISO8601StringFromDate:endDate],
+                    @"startDate" : [self.rnAppleHealthKit buildISO8601StringFrom:startDate],
+                    @"endDate" : [self.rnAppleHealthKit buildISO8601StringFrom:endDate],
             };
 
             callback(@[[NSNull null], response]);
@@ -357,16 +357,16 @@
 {
     HKQuantityType *leanBodyMassType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierLeanBodyMass];
     
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit poundUnit]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit poundUnit]];
     NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
-    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
-    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
+    NSDate *endDate = [self.rnAppleHealthKit dateFrom:input key:@"endDate" defaultDate:[NSDate date]];
     if(startDate == nil){
         callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
         return;
     }
-    NSPredicate * predicate = [RCTAppleHealthKit predicateForSamplesBetweenDates:startDate endDate:endDate];
+    NSPredicate * predicate = [self.rnAppleHealthKit predicateForSamplesBetweenWithStartDate:startDate endDate:endDate];
     
     [self fetchQuantitySamplesOfType:leanBodyMassType
                                 unit:unit
@@ -388,9 +388,9 @@
 
 - (void)body_saveLeanBodyMass:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-    double mass = [RCTAppleHealthKit doubleValueFromOptions:input];
-    NSDate *sampleDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:[NSDate date]];
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit poundUnit]];
+    double mass = [[input objectForKey:@"value"] doubleValue];
+    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:[NSDate date]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit poundUnit]];
     
     HKQuantity *massQuantity = [HKQuantity quantityWithUnit:unit doubleValue:mass];
     HKQuantityType *massType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierLeanBodyMass];

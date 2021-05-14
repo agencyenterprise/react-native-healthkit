@@ -20,7 +20,7 @@
     
     HKQuantityType *bloodAlcoholContentType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBloodAlcoholContent];
     
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit percentUnit]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit percentUnit]];
     
     [self fetchMostRecentQuantitySampleOfType:bloodAlcoholContentType
                                     predicate:nil
@@ -33,8 +33,8 @@
             double usersBloodAlcoholContent = [mostRecentQuantity doubleValueForUnit:unit];
             NSDictionary *response = @{
                     @"value" : @(usersBloodAlcoholContent),
-                    @"startDate" : [RCTAppleHealthKit buildISO8601StringFromDate:startDate],
-                    @"endDate" : [RCTAppleHealthKit buildISO8601StringFromDate:endDate],
+                    @"startDate" : [self.rnAppleHealthKit buildISO8601StringFrom:startDate],
+                    @"endDate" : [self.rnAppleHealthKit buildISO8601StringFrom:endDate],
             };
 
             callback(@[[NSNull null], response]);
@@ -46,16 +46,16 @@
     
     HKQuantityType *bloodAlcoholContentType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBloodAlcoholContent];
 
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit percentUnit]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit percentUnit]];
     NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
-    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
-    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
+    NSDate *endDate = [self.rnAppleHealthKit dateFrom:input key:@"endDate" defaultDate:[NSDate date]];
     if(startDate == nil){
         callback(@[RCTMakeError(@"startDate is required in options", nil, nil)]);
         return;
     }
-    NSPredicate * predicate = [RCTAppleHealthKit predicateForSamplesBetweenDates:startDate endDate:endDate];
+    NSPredicate * predicate = [self.rnAppleHealthKit predicateForSamplesBetweenWithStartDate:startDate endDate:endDate];
 
     [self fetchQuantitySamplesOfType:bloodAlcoholContentType
                                 unit:unit
@@ -76,9 +76,9 @@
     
 - (void)labTests_saveBloodAlcoholContent:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-    double bloodAlcoholContent = [RCTAppleHealthKit doubleValueFromOptions:input];
-    NSDate *sampleDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:[NSDate date]];
-    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit percentUnit]];
+    double bloodAlcoholContent = [[input objectForKey:@"value"] doubleValue];
+    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:[NSDate date]];
+    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit percentUnit]];
 
     HKQuantity *bloodAlcoholContentQuantity = [HKQuantity quantityWithUnit:unit doubleValue:bloodAlcoholContent];
     HKQuantityType *bloodAlcoholContentType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBloodAlcoholContent];

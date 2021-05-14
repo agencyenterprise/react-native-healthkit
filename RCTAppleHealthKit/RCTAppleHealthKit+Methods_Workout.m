@@ -19,11 +19,11 @@
     NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
     
     HKSampleType *workoutType = [HKObjectType workoutType];
-    HKQueryAnchor *anchor = [RCTAppleHealthKit hkAnchorFromOptions:input];
-    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
-    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    HKQueryAnchor *anchor = [self.rnAppleHealthKit hkAnchorFrom:input];
+    NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
+    NSDate *endDate = [self.rnAppleHealthKit dateFrom:input key:@"endDate" defaultDate:[NSDate date]];
     
-    NSPredicate *predicate = [RCTAppleHealthKit predicateForAnchoredQueries:anchor startDate:startDate endDate:endDate];
+    NSPredicate *predicate = [self.rnAppleHealthKit predicateForAnchoredQueriesWithStartDate:startDate endDate:endDate];
 
     void (^completion)(NSDictionary *results, NSError *error);
 
@@ -48,12 +48,11 @@
 }
 
 - (void)workout_save: (NSDictionary *)input callback: (RCTResponseSenderBlock)callback {
-    HKWorkoutActivityType type = [RCTAppleHealthKit hkWorkoutActivityTypeFromOptions:input key:@"type" withDefault:HKWorkoutActivityTypeAmericanFootball];
-    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
-    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:nil];
-    NSTimeInterval duration = [RCTAppleHealthKit doubleFromOptions:input key:@"duration" withDefault:(NSTimeInterval)0];
-    HKQuantity *totalEnergyBurned = [RCTAppleHealthKit hkQuantityFromOptions:input valueKey:@"energyBurned" unitKey:@"energyBurnedUnit"];
-    HKQuantity *totalDistance = [RCTAppleHealthKit hkQuantityFromOptions:input valueKey:@"distance" unitKey:@"distanceUnit"];
+    HKWorkoutActivityType type = [self.rnAppleHealthKit hkWorkoutActivityTypeFrom:input key:@"type" defaultValue:HKWorkoutActivityTypeAmericanFootball];
+    NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
+    NSDate *endDate = [self.rnAppleHealthKit dateFrom:input key:@"endDate" defaultDate:nil];
+    HKQuantity *totalEnergyBurned = [self.rnAppleHealthKit hkQuantityFrom:input valueKey:@"energyBurned" unitKey:@"energyBurnedUnit"];
+    HKQuantity *totalDistance = [self.rnAppleHealthKit hkQuantityFrom:input valueKey:@"distance" unitKey:@"distanceUnit"];
 
 
     HKWorkout *workout = [
