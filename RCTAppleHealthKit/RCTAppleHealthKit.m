@@ -20,6 +20,7 @@
 #import "RCTAppleHealthKit+Methods_Mindfulness.h"
 #import "RCTAppleHealthKit+Methods_Workout.h"
 #import "RCTAppleHealthKit+Methods_LabTests.h"
+#import "RCTAppleHealthKit+Methods_ReproductiveHealth.h"
 
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventDispatcher.h>
@@ -264,6 +265,15 @@ RCT_EXPORT_METHOD(getEnergyConsumedSamples:(NSDictionary *)input callback:(RCTRe
 RCT_EXPORT_METHOD(getProteinSamples:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback)
 {
    [self dietary_getProteinSamples:input callback:callback];
+}
+
+RCT_EXPORT_METHOD(getBasalBodyTemperatureSamples:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback)
+{
+   [self reproductiveHealth_getBasalBodyTemperatureSamples:input callback:callback];
+}
+RCT_EXPORT_METHOD(getMenstrualFlowSamples:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback)
+{
+   [self reproductiveHealth_getMenstrualFlowSamples:input callback:callback];
 }
 
 
@@ -530,7 +540,7 @@ RCT_EXPORT_METHOD(saveBloodAlcoholContent: (NSDictionary *)input callback:(RCTRe
 
 - (void)getAuthorizationStatus:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
-  
+
     [self _initializeHealthStore];
     if ([HKHealthStore isHealthDataAvailable]) {
 
